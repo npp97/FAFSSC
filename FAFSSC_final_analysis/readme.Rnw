@@ -1,0 +1,18 @@
+% 
+\documentclass[a4paper]{article}
+\usepackage{Sweave}
+
+\title{Readme}
+\author{junhui.zhang}
+
+\begin{document}
+
+\maketitle
+
+This floder contains R Code to analyze the final version soil and vegetation
+carbon data to produce the figures in MS　of "Fine roots allocation made the
+satatured soil carbon early approached(FAFSSC)"
+
+
+
+\end{document}
