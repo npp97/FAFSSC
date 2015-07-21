@@ -9,6 +9,13 @@ sumfun <- function(x, ...) {
   c(m = mean(x, ...), md = median(x, ...), v = sd(x, ...), l = length(x))
 }
 
+library(gregmisc)
+
+q99<-function(x,...){return(c(quantile(x,c(0.99),...)))}
+q01<-function(x,...){quantile(x,0.01, ...)}
+q50<-function(x, ...){median(x, ...)}
+
+
 require(doBy)
 require(strucchange)
 require(breakpoint)
@@ -31,6 +38,10 @@ MOD13Q1.a<-MOD13Q1[,c("ydID","AYearDoy","year","doy","X250m_16_days_EVI","X250m_
 
 merge(MOD11A2.a,MOD13Q1.a)->MOD.LST_VI
 
+month<-matrix(NA,ncol=1,nrow=nrow(MOD.LST_VI))
+for (i in 1:nrow(MOD.LST_VI)){month[i]<-ydn2md(MOD.LST_VI$year[i],MOD.LST_VI$doy[i])[[1]]}
+MOD.LST_VI<-data.frame(MOD.LST_VI,month)
+
 MOD.LST_VI$TVDI.evi<-matrix(NA,ncol=1,nrow=nrow(MOD.LST_VI))
 MOD.LST_VI$TVDI.ndvi<-matrix(NA,ncol=1,nrow=nrow(MOD.LST_VI))
 MOD.LST_VI$evi_break<-matrix(NA,ncol=1,nrow=nrow(MOD.LST_VI))
@@ -38,7 +49,7 @@ MOD.LST_VI$ndvi_break<-matrix(NA,ncol=1,nrow=nrow(MOD.LST_VI))
 lst.min_p<-lst.max_p<-matrix(NA,ncol=1,nrow=nrow(MOD.LST_VI))
 #to buils TVDImin TVDImax according to doy using LST-NDVI, LST-EVI regression
 
-doy.lst<-c(129,145,161,177,193,209,225,241,257,273)
+doy.lst<-c(97,113,129,145,161,177,193,209,225,241,257,273)
 l.dy.lst<-length(doy.lst)
 #plot(1,type='n',xlim=c(0,1),ylim=c(200,320))
 
@@ -153,8 +164,35 @@ for (i in 1:l.dy.lst){
 }
 
 write.csv(MOD.LST_VI,"MOD_LST_VI_TVDI.csv",row.names = F)
-summaryBy(LST_Day_1km+X250m_16_days_EVI+X250m_16_days_NDVI+TVDI.evi+TVDI.ndvi~ydID,data=MOD.LST_VI,FUN=sumfun,na.rm=TRUE)->plot_sum
+summaryBy(LST_Day_1km+X250m_16_days_EVI+X250m_16_days_NDVI+TVDI.evi+TVDI.ndvi~ydID+month,data=MOD.LST_VI,FUN=sumfun,na.rm=TRUE)->plot_sum_m
+summaryBy(LST_Day_1km+X250m_16_days_EVI+X250m_16_days_NDVI+TVDI.evi+TVDI.ndvi~ydID,data=MOD.LST_VI,FUN=sumfun,na.rm=TRUE)->plot_sum_yr
+names(plot_sum_yr)[1]<-'ydID1'
+
+plot_sum_m.w<-reshape(plot_sum_m,direction='wide',idvar=c("ydID"),timevar="month")
+for (i in 1:3){
+	aa<-expand.grid(c(i),c("TVDI.evi","TVDI.ndvi"),c("m","v","md","l"))
+	lst.nm.tf<-paste(aa[,2],aa[,3],aa[,1],sep='.')
+	aa1<-expand.grid(c(4),c("TVDI.evi","TVDI.ndvi"),c("m","v","md","l"))
+	lst.nm.f<-paste(aa1[,2],aa1[,3],aa1[,1],sep='.')
+	for(j in 1:length(lst.nm.tf)){plot_sum_m.w[,lst.nm.tf[j]]<-plot_sum_m.w[,lst.nm.f[j]]}
+}
+
+for (i in 10:12){
+	aa<-expand.grid(c(i),c("TVDI.evi","TVDI.ndvi"),c("m","v","md","l"))
+	lst.nm.tf<-paste(aa[,2],aa[,3],aa[,1],sep='.')
+	aa1<-expand.grid(c(9),c("TVDI.evi","TVDI.ndvi"),c("m","v","md","l"))
+	lst.nm.f<-paste(aa1[,2],aa1[,3],aa1[,1],sep='.')
+	for(j in 1:length(lst.nm.tf)){plot_sum_m.w[,lst.nm.tf[j]]<-plot_sum_m.w[,lst.nm.f[j]]}
+}
+
+#names(LmBymth.w)<-c('ydID','lat','long',paste('Lm',1:12,sep=''))
+plot_sum<-cbind(plot_sum_m.w,plot_sum_yr)
+aa<-expand.grid(c(1:12),c("LST_Day_1km","X250m_16_days_EVI","X250m_16_days_NDVI","TVDI.evi","TVDI.ndvi"),c("m","v","md","l"))
+lst.nm<-paste(aa[,2],aa[,3],aa[,1],sep='.')
+plot_sum<-plot_sum[,c("ydID",lst.nm,names(plot_sum_yr))]
 write.csv(plot_sum,"summLST_VI_TVDI.csv",row.names = F)
+
+
 
 read.csv('s_lai.csv')->slai
 

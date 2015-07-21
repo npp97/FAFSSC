@@ -116,7 +116,7 @@ gf.veg<-randomForest(W_total_tC_ha~lat+long+aspect+slope+tpi+age_max+max_spec+tw
 gf.veg<-randomForest(W_total_tC_ha~lat+long+aspect+slope+tpi+age_max+max_spec+twi,data=all,importance=T,ntree=200,nPerm=10)
 set.seed(71)
 gf.veg<-randomForest(W_total_tC_ha~lat+long+aspect+slope+tpi+age_max+max_spec+twi,data=all,importance=T,ntree=200,nPerm=10)
-partialPlot(gf.veg,all,x.var=“age_max”)
+partialPlot(gf.veg,all,x.var=鈥渁ge_max鈥�)
 partialPlot(gf.veg,all,x.var=age_max)
 gf.veg<-randomForest(SoilC_1m_t_ha~lat+long+aspect+slope+tpi+age_max+max_spec+twi,data=all[!is.na(all$SoilC_1m_t_ha),],importance=T,ntree=200,nPerm=10)
 partialPlot(gf.veg,all,x.var=age_max)
@@ -133,3 +133,22 @@ win.graph()
 gf.veg<-randomForest(W_total_tC_ha~lat+long+aspect+slope+tpi+age_max+max_spec+twi,data=all,importance=T,ntree=200,nPerm=10)
 partialPlot(gf.veg,all,x.var=age_max)
 grid()
+
+#------------------------------------
+read.csv('pppa.csv')->pppa
+require(randomForestSRC)
+
+win.graph(height=6,width=6)
+par(mfrow=c(2,2))
+hist(pppa$W_total_tC_ha,20,freq=FALSE,xlab=expression("Biomass Carbon (MgC ha"^{-1}*")"),main='')
+hist(pppa$SoilC_1m_t_ha,20,freq=FALSE,xlab=expression("Soil Carbon (MgC ha"^{-1}*")"),main='')
+hist(pppa$TotC_eco,20,freq=FALSE,xlab=expression("Total Carbon (MgC ha"^{-1}*")"),main='')
+hist(pppa$age_max,20,freq=FALSE,xlab=expression("Plot age (Year)"),main='')
+
+gf.veg<-rfsrc(W_total_tC_ha~lat+long+aspect+slope+tpi+age_max+max_spec+soil_gang,data=pppa,importance="permute.ensemble",nTree=200, seed=-111)
+#gf.veg.p<-plot.variable(gf.veg,partial=TRUE)
+plot(gf.veg)
+gf.s1m<-rfsrc(SoilC_1m_t_ha~lat+long+aspect+slope+tpi+age_max+max_spec+soil_gang,data=pppa,importance="permute.ensemble",nTree=200, seed=-111)
+plot(gf.s1m)
+gf.totc<-rfsrc(TotC_eco~lat+long+aspect+slope+tpi+age_max+max_spec+soil_gang,data=pppa,importance="permute.ensemble",nTree=200, seed=-111)
+plot(gf.totc)
