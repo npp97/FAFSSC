@@ -35,7 +35,7 @@ fr.lf<-data.frame(age=gr.lf$pData[[1]]$x.uniq,lf=gr.lf$pData[[1]]$yhat,lf.se=gr.
 ylim<-floor(range(fr.lf$age))
 lf.a<-data.frame(approx(fr.lf$age,fr.lf$lf,ylim[1]:272),ci=I(2*7*approx(fr.lf$age,fr.lf$lf.se,ylim[1]:272)$y))
 names(lf.a)<-c("age","lf","ci")
-lf.a$lf<-lf.a$lf+shrb.a$shrb*0.15
+lf.a$lf<-lf.a$lf+shrb.a$shrb*0.15  #assume the ratio of shrub leaf litter is 15%
 
 #----------------------------------
 read.csv('Book8.csv')->b8 #
@@ -46,9 +46,9 @@ plot.variable(gfr.lc,"age",partial=T,npts=50)->gr.lc
 lc.rf<-data.frame(age=gr.lc$pData[[1]]$x.uniq,lc=gr.lc$pData[[1]]$yhat,lc.se=gr.lc$pData[[1]]$yhat.se)
 ylim<-floor(range(lc.rf$age))
 lc.a<-approx(lc.rf$age,lc.rf$lc,ylim[1]:272)
-lc.f<-data.frame(age=lc.a$x,lc=lc.a$y,ci=I(2*5*approx(lc.rf$age,lc.rf$lc.se,ylim[1]:272)$y))
+lc.f<-data.frame(age=lc.a$x,lc=lc.a$y,ci=I(2*7*approx(lc.rf$age,lc.rf$lc.se,ylim[1]:272)$y))
 lc.f$lc<-lc.f$lc+lf.a$lf/5
-lc.f$lc.se<-lc.f$ci+lf.a$ci/5
+lc.f$ci<-lc.f$ci+lf.a$ci/5   #assume the ratio of foilage:leaf is 1:5
 
 ########################FINE Roots
 read.csv('afb.csv')->afb
@@ -59,6 +59,21 @@ plot.variable(gfr.fr,"age_max",partial=T,npts=50)->gr.fr
 fr.rf<-data.frame(age=gr.fr$pData[[1]]$x.uniq,fr=gr.fr$pData[[1]]$yhat,fr.se=gr.fr$pData[[1]]$yhat.se)
 ylim<-floor(range(fr.rf$age))
 fr.a<-approx(fr.rf$age,fr.rf$fr,ylim[1]:272)
-fr.f<-data.frame(age=fr.a$x,fr=fr.a$y,ci=I(2*5*approx(fr.rf$age,fr.rf$fr,ylim[1]:272)$y))
+fr.f<-data.frame(age=fr.a$x,fr=fr.a$y,ci=I(2*7*approx(fr.rf$age,fr.rf$fr,ylim[1]:272)$y))
+
+#-------litter
+#
+read.csv('bio_soc_env_all_gsla.csv')->all.gsl
+rfsrc(litt_Carbon_t_ha~age_max+lat+long,data=all.gsl,importance="permute.ensemble",na.action = "na.impute",nimpute = 10, seed= -111,ntree=200)->gfr.sl
+plot.variable(gfr.sl,"age_max",partial=T,npts=50)->gr.sl
+
+fr.sl<-data.frame(age=gr.sl$pData[[1]]$x.uniq,sl=gr.gr$pData[[1]]$yhat,sl.se=gr.sl$pData[[1]]$yhat.se)
+ylim<-floor(range(fr.sl$age))
+sl.a<-data.frame(approx(fr.sl$age,fr.sl$grs,ylim[1]:272),ci=I(2*7*approx(fr.sl$age,fr.sl$sl.se,ylim[1]:272)$y))
+names(sl.a)<-c("age","sl","ci")
+
+#ll<-sl.a
+#ll$sl<-sl.a$sl+fr.f$fr
+#ll$ci<-sl.a$ci+fr.f$ci
 
 save.image("litters.RData")
