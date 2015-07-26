@@ -14,7 +14,7 @@
 #abf<-merge(abf,cwd,all.x=T)
 #write.csv(abf,'D://东北//data//基础信息//TRMP//cwd_projs.csv')
 
-#---------------------------------------------------------
+#---------------------------------------------------------CWD
 require(forestFloor)
 require(robust)
 require(randomForest)
@@ -51,7 +51,7 @@ rfo=randomForest::randomForest(X,Y,keep.inbag=TRUE,ntree=5000,replace=TRUE,impor
 #Col=fcol(ff,1)
 
 #plot(ff,col=Col,order_by_importance=TRUE,pch=19)
-
+# 
 pp<-predict(rfo)
 lmm<-lm(Y~pp)
 

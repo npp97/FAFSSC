@@ -111,6 +111,7 @@ all.gsl$shrb_C[ii_p]<-coef(lmm)[1]+coef(lmm)[2]*z
 write.csv(all.gsl,'bio_soc_env_all_gsla.csv')
 #
 
+#---------------------- Shrub predict
 
 setwd("D://东北//data//基础信息//TRMP")
 
@@ -133,6 +134,46 @@ lmm<-rlm(Y~pp)
 
 z<-predict(rfo,newdata=all.gsl[ii_p,col2prd]);
 all.gsl$litt_Carbon_t_ha[ii_p]<-coef(lmm)[1]+coef(lmm)[2]*z
+
+write.csv(all.gsl,'bio_soc_env_all_gsla.csv')
+
+#------------------------CWD
+require(forestFloor)
+require(robust)
+require(randomForest)
+setwd("D://东北//data//基础信息//TRMP")
+
+read.csv('cwd_projs.csv')->cwd.gsl
+read.csv('bio_soc_env_all_gsla.csv')->all.gsl
+names(cwd.gsl)[15]<-"age_max"
+
+
+#TO fill NA of CWD
+#
+train_fl<-cwd.gsl[!is.na(cwd.gsl$CCWD_tC_ha),]
+ii_p<-which(is.na(cwd.gsl$CCWD_tC_ha))
+
+col2prd<-c("lat","long","elev","slope","aspect","twi","tpi","p_mm","ta_C","W_total_t_ha","lai","age_max")
+#col2prd<-c("ta_C","p_mm","slope","aspect","twi","tpi","W_total_t_ha","lai","age")
+#col2prd<-c("lat","long","age")
+
+col.y<-c("CCWD_tC_ha")
+
+Y=train_fl[,col.y]
+X=train_fl[,col2prd]
+
+rfo=randomForest::randomForest(X,Y,keep.inbag=TRUE,ntree=5000,replace=TRUE,importance=TRUE)
+#ff<- forestFloor(rfo,X)
+#print(ff)
+#Col=fcol(ff,1)
+
+#plot(ff,col=Col,order_by_importance=TRUE,pch=19)
+# 
+pp<-predict(rfo)
+lmm<-lm(Y~pp)
+
+z<-predict(rfo,newdata=all.gsl[,col2prd]);
+all.gsl$CCWD_tC_ha_prd<-coef(lmm)[1]+coef(lmm)[2]*z
 
 write.csv(all.gsl,'bio_soc_env_all_gsla.csv')
 
