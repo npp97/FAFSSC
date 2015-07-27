@@ -92,4 +92,4 @@ lmm<-lm(Y~pp)
 z<-predict(rfo,newdata=all.gsl[,col2prd]);
 all.gsl$total_fr_tC_ha<-coef(lmm)[1]+coef(lmm)[2]*z
 
-write.csv(all.gsl,'all_grs_shrb_litb.csv')
+write.csv(all.gsl,'bio_soc_env_all_gsla.csv')
