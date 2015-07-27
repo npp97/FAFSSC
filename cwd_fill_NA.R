@@ -69,3 +69,39 @@ names(cwd2.a)<-c("age","cwd","ci")
 
 write.csv(cwd.gsl,'all_grs_shrb_litb.csv')
 
+###################LC_tot_tC_ha_yr
+require(randomForest)
+setwd("D://东北//data//基础信息//RESULT//csv")
+
+read.csv('bio_soc_env_all_gsla.csv')->all.gsl
+
+train_fl<-all.gsl[!is.na(all.gsl$LC_tot_tC_ha_yr),]
+ii_p<-which(is.na(all.gsl$LC_tot_tC_ha_yr))
+
+col2prd<-c("lat","long","elev","slope","aspect","twi","tpi","p_mm","ta_C","W_total_t_ha","lai","age_max")
+#col2prd<-c("ta_C","p_mm","slope","aspect","twi","tpi","W_total_t_ha","lai","age")
+#col2prd<-c("lat","long","age")
+
+col.y<-c("LC_tot_tC_ha_yr")
+
+Y=train_fl[,col.y]
+X=train_fl[,col2prd]
+
+rfo=randomForest::randomForest(X,Y,keep.inbag=TRUE,ntree=5000,replace=TRUE,importance=TRUE)
+#ff<- forestFloor(rfo,X)
+#print(ff)
+#Col=fcol(ff,1)
+
+#plot(ff,col=Col,order_by_importance=TRUE,pch=19)
+# 
+pp<-predict(rfo)
+lmm<-lm(Y~pp)
+
+z<-predict(rfo,newdata=all.gsl[ii_p,col2prd]);
+all.gsl$LC_tot_tC_ha_yr[ii_p]<-coef(lmm)[1]+coef(lmm)[2]*z
+
+write.csv(all.gsl,'bio_soc_env_all_gsla.csv')
+
+
+
+

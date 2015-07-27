@@ -7,7 +7,7 @@ require(randomForestSRC)
 require(zoo)
 require(Hmisc)
 
-setwd("D://东北//data//基础信息//TRMP")
+setwd("D://东北//data//基础信息//RESULT//csv")
 
 read.csv('bio_soc_env_all_gsla.csv')->all.gsl
 #----------------------------GRASS
@@ -29,7 +29,7 @@ shrb.a<-data.frame(approx(fr.shrb$age,fr.shrb$shrb,ylim[1]:272),ci=I(2*approx(fr
 names(shrb.a)<-c("age","shrb","shrb.ci")
 
 #------------------leaf_litter
-read.csv('bio_soc_env_all_gsla.csv')->all.gsl
+#read.csv('bio_soc_env_all_gsla.csv')->all.gsl
 #----------------------------Leaf
 rfsrc(W_leaf_kg_tC_ha~age_max+lat+long,data=all.gsl,importance="permute.ensemble",na.action = "na.impute",nimpute = 10, seed= -111,ntree=200)->gfr.lf
 plot.variable(gfr.lf,"age_max",partial=T,npts=75)->gr.lf
@@ -39,23 +39,24 @@ ylim<-floor(range(fr.lf$age))
 lf.a<-data.frame(approx(fr.lf$age,fr.lf$lf,ylim[1]:272),ci=I(2*approx(fr.lf$age,fr.lf$lf.se,ylim[1]:272)$y))
 names(lf.a)<-c("age","lf","lf.ci")
 lf.a$lf<-lf.a$lf+shrb.a$shrb*0.15  #assume the ratio of shrub leaf litter is 15%
+lf.a$lf.ci<-lf.a$lf.ci+shrb.a$shrb.ci*0.15
 
 #----------------------------------
-read.csv('Book8.csv')->b8 #
+#read.csv('Book8.csv')->b8 #
 
-rfsrc(LC_tot_tC_ha_yr~age+lat+long,data=b8,importance="permute.ensemble",na.action = "na.impute",nimpute = 10, seed= -111,ntree=200)->gfr.lc
-plot.variable(gfr.lc,"age",partial=T,npts=75)->gr.lc
+rfsrc(LC_tot_tC_ha_yr~age_max+lat+long,data=all.gsl,importance="permute.ensemble",na.action = "na.impute",nimpute = 10, seed= -111,ntree=200)->gfr.lc
+plot.variable(gfr.lc,"age_max",partial=T,npts=75)->gr.lc
 
 lc.rf<-data.frame(age=gr.lc$pData[[1]]$x.uniq,lc=gr.lc$pData[[1]]$yhat,lc.se=gr.lc$pData[[1]]$yhat.se)
 ylim<-floor(range(lc.rf$age))
 lc.a<-approx(lc.rf$age,lc.rf$lc,ylim[1]:272)
 lc.f<-data.frame(age=lc.a$x,lc=lc.a$y,ci=I(2*approx(lc.rf$age,lc.rf$lc.se,ylim[1]:272)$y))
-lc.f$lc<-lc.f$lc+lf.a$lf/5
-lc.f$ci<-lc.f$ci+lf.a$ci/5   #assume the ratio of foilage:leaf is 1:5
-names(lc.f)<-c("age","lc","lc.se")
+lc.f$lc<-lc.f$lc+lf.a$lf/4
+lc.f$ci<-lc.f$ci+lf.a$lf.ci/4   #assume the ratio of foilage:leaf is 1:5
+names(lc.f)<-c("age","lc","lc.ci")
 
 ########################FINE Roots
-read.csv('bio_soc_env_all_gsla.csv')->all.gsl
+#read.csv('bio_soc_env_all_gsla.csv')->all.gsl
 
 rfsrc(live_fr_tC_ha~age_max+lat+long,data=all.gsl,importance="permute.ensemble",na.action = "na.impute",nimpute = 10, seed= -111,ntree=200)->gfr.fr
 plot.variable(gfr.fr,"age_max",partial=T,npts=75)->gr.fr
@@ -63,11 +64,11 @@ plot.variable(gfr.fr,"age_max",partial=T,npts=75)->gr.fr
 fr.rf<-data.frame(age=gr.fr$pData[[1]]$x.uniq,fr=gr.fr$pData[[1]]$yhat,fr.se=gr.fr$pData[[1]]$yhat.se)
 ylim<-floor(range(fr.rf$age))
 fr.a<-approx(fr.rf$age,fr.rf$fr,ylim[1]:272)
-fr.f<-data.frame(age=fr.a$x,fr=fr.a$y,fr.ci=I(2*approx(fr.rf$age,fr.rf$fr,ylim[1]:272)$y))
+fr.f<-data.frame(age=fr.a$x,fr=fr.a$y,fr.ci=I(2*approx(fr.rf$age,fr.rf$fr.se,ylim[1]:272)$y))
 
 #-------litter
 #
-read.csv('bio_soc_env_all_gsla.csv')->all.gsl
+#read.csv('bio_soc_env_all_gsla.csv')->all.gsl
 rfsrc(litt_Carbon_t_ha~age_max+lat+long,data=all.gsl,importance="permute.ensemble",na.action = "na.impute",nimpute = 10, seed= -111,ntree=200)->gfr.sl
 plot.variable(gfr.sl,"age_max",partial=T,npts=75)->gr.sl
 
@@ -87,6 +88,5 @@ litt_inputs_i<-cbind(grs.a,shrb.a,lf.a,lc.f,fr.f,sl.a)
 
 write.csv(litt_inputs,"litt_inputs.csv",row.names=F)
 write.csv(litt_inputs_i,"litt_inputs_i.csv",row.names=F)
-
 
 save.image("litters.RData")
