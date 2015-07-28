@@ -1,14 +1,14 @@
 #TO-Do List on Jul-27
 
-##1 建立finnal version 数据，只包括与文章最终结果直接相关的数据和程序。整理数据，including two subfolder, org and csv
+##1 建立finnal version 数据，只包括与文章最终结果直接相关的数据和程序。整理数据，including two subfolder, org and csv --------DONE
 
-##2 rebuild general pattern using org as temperalte
+##2 rebuild general pattern using org as temperalte --------DONE
 
-##3 reregressed the parameters using orgionPro 2015
+##3 reregressed the parameters using orgionPro 2015 --------DONE
 
-##4 redo parameters estimation using RootFinder.R
+##4 redo parameters estimation using RootFinder.R --------DONE
 
-##5 Reanalysize the regulating factors for parameters obtanined in abve 4
+##5 Reanalysize the regulating factors for parameters obtanined in abve 4 --------50%DONE 
 
 ##6 recalculate the progressing contribution of soil, tree_biomass,litter and subcanopy plants
 

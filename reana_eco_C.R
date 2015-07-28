@@ -103,4 +103,4 @@ grid()
 #################################
 
 write.csv(cbind(fr.totc2,fr.bio2,fr.soilc,rfr.soilc,rfr.totc2,rfr.bio2),'ecosystem_carbon_age_2.csv',row.names=F)
-write.csv(cbind(totc2.a,bio2.a,soilc.a,totc2.b,bio2.b,soilc.b),'ecosystem_carbon_age_a2.csv',row.names=F)
+write.csv(cbind(totc2.a,bio2.a,soilc.a,totc2.b,bio2.b,soilc.b),'ecosystem_carbon_age_2a.csv',row.names=F)
