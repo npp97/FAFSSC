@@ -2,6 +2,7 @@
 library(MuMIn)
 require(randomForestSRC)
 require(nlme)
+require(mgcv)
 
 setwd("D://东北//data//基础信息//RESULT//csv")
 read.csv("roots_max_min_w.csv")->mmp_l
@@ -38,23 +39,67 @@ ii_soilc<-which(mmp_l$VARIABLE %in% "SOILC")
 rfsrc(top~ta_C+p_mm+veg+bottom,data=mmp_l[ii_soilc,],importance="permute.ensemble",keep.inbag=TRUE,replace=TRUE,na.action = "na.impute",nimpute = 10, seed= -111,ntree=5000)->gfr.top.soilc
 plot.variable(gfr.top.soilc,partial=T)
 
-
+sink("gamm_analysis.txt")
 model.rbio.null<-lme(root~1,random=~1|ZONE,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-rbio.model<-gls(log(root)~p_mm+ta_C+veg,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-rsoil.model<-gls(log(root)~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
-rtotc.model<-gls(log(root)~p_mm+ta_C+veg,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
-anova(rbio.model)
-anova(rsoil.model)
-anova(rtotc.model)
+rbio.gls<-gls(root~p_mm+ta_C+veg,data=mmp_l[mmp_l$VARIABLE=='BIO',])
+rsoil.gls<-gls(root~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
+rtotc.gls<-gls(root~p_mm+ta_C+veg,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
+print("anova(rbio.gls)")
+anova(rbio.gls)
+print("anova(rsoil.gls)")
+anova(rsoil.gls)
+print("anova(rtotc.gls)")
+anova(rtotc.gls)
 
 
-tbio2.model<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-tsoil2.model<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
-ttotc2.model<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
-anova(tbio2.model)
-anova(tsoil2.model)
-anova(ttotc2.model)
+tbio.gls<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='BIO',])
+tsoil.gls<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
+ttotc.gls<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
+print("anova(tbio.gls)")
+anova(tbio.gls)
+print("anova(tsoil.gls)")
+anova(tsoil.gls)
+print("anova(ttotc.gls)")
+anova(ttotc.gls)
 
+
+rbio.gam<-gamm(root~s(p_mm)+s(ta_C)+veg,data=mmp_l[mmp_l$VARIABLE=='BIO',],method="REML")
+rsoil.gam<-gamm(root~s(p_mm)+s(ta_C)+veg+s(bottom),data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit",method="REML")
+rtotc.gam<-gamm(root~s(p_mm)+s(ta_C)+veg,data=mmp_l[mmp_l$VARIABLE=='TOTC',],method="REML")
+print("anova(rbio.gam$gam)")
+anova(rbio.gam$gam)
+print("anova(rsoil.gam$gam)")
+anova(rsoil.gam$gam)
+print("anova(rtotc.gam$gam)")
+anova(rtotc.gam$gam)
+
+print("summary(rbio.gam$gam)")
+summary(rbio.gam$gam)
+print("summary(rsoil.gam$gam)")
+summary(rsoil.gam$gam)
+print("summary(rtotc.gam$gam)")
+summary(rtotc.gam$gam)
+
+
+tbio.gam<-gamm(top~s(p_mm)+s(ta_C)+veg,data=mmp_l[mmp_l$VARIABLE=='BIO',],method="REML")
+tsoil.gam<-gamm(top~s(p_mm)+s(ta_C)+veg+s(bottom),data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit",,method="REML")
+ttotc.gam<-gamm(top~s(p_mm)+s(ta_C)+veg,data=mmp_l[mmp_l$VARIABLE=='TOTC',],method="REML")
+print("anova(tbio.gam$gam)")
+anova(tbio.gam$gam)
+print("anova(tsoil.gam$gam)")
+anova(tsoil.gam$gam)
+print("anova(ttotc.gam$gam)")
+anova(ttotc.gam$gam)
+
+print("summary(tbio.gam$gam)")
+summary(tbio.gam$gam)
+print("summary(tsoil.gam$gam)")
+summary(tsoil.gam$gam)
+print("summary(ttotc.gam$gam)")
+summary(ttotc.gam$gam)
+
+
+sink()
 
 
 All_model.rbio<-lme(ROOT~p_mm.md*ta_C.md+SPEC,random=~LatZ|LonZ/SPEC,data=crv_pt.ana[crv_pt.ana$variable=='BIO',])

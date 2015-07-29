@@ -522,7 +522,7 @@ soc<-c(147.7529, 147.97501, 148.19712, 148.41923, 148.64134, 148.86345,
 	#  															dDOC = a_doc*ln(lai)+b_doc; 
 	# DOC production, absorb and leaching is the output from complex interactions among hydrology, biochemiclogical, microclimate and biological
 	# Up-to-now, there is no aggrement on the formulation and few direct measurement on that, so we formulated a log response function on several reports like Yan et al.,2015, 
-	# Peichl et al.,2007¡£ Close relationship exist between DOCexport and several biological variables,like DBH, above-ground biomass, biomass of fine-roots, LAI etc.
+	# Peichl et al.,2007ï¿½ï¿½ Close relationship exist between DOCexport and several biological variables,like DBH, above-ground biomass, biomass of fine-roots, LAI etc.
 	# For simplicity and sensitive, LAI was selected to describe the dynamics of DOCexpor for the LAI bridges the hydrological, biological and biogeochemicial processes. LAI has 
 	# been used as the response variable for precipation interception and indicator of canopy development during restoration, Leaf litter is one of the most important litter that
 	# produce DOC.
@@ -957,7 +957,7 @@ upper = c(a_doc =-0.,
 		alf_som2to3=0.8,
 		alf_som3to4=0.7
 );
-source('litters_mat.R')
+source('litters_matv2.R')
 
 times<-11:272
 
