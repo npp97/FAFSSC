@@ -8,7 +8,7 @@
 
 ##4 redo parameters estimation using RootFinder.R --------DONE
 
-##5 Reanalysize the regulating factors for parameters obtanined in abve 4 --------50%DONE 
+##5 Reanalysize the regulating factors for parameters obtanined in abve 4 -------DONE 
 
 ##6 recalculate the progressing contribution of soil, tree_biomass,litter and subcanopy plants
 

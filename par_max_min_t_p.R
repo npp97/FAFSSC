@@ -39,34 +39,18 @@ rfsrc(top~ta_C+p_mm+veg+bottom,data=mmp_l[ii_soilc,],importance="permute.ensembl
 plot.variable(gfr.top.soilc,partial=T)
 
 
-
-
 model.rbio.null<-lme(root~1,random=~1|ZONE,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-rbio.model<-gls(log(root)~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='BIO',])
+rbio.model<-gls(log(root)~p_mm+ta_C+veg,data=mmp_l[mmp_l$VARIABLE=='BIO',])
 rsoil.model<-gls(log(root)~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
-rtotc.model<-gls(log(root)~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
+rtotc.model<-gls(log(root)~p_mm+ta_C+veg,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
 anova(rbio.model)
 anova(rsoil.model)
 anova(rtotc.model)
 
 
-tbio.model<-gls(top~p_mm+ta_C+veg+bottom+dif_r_pct,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-tsoil.model<-gls(top~p_mm+ta_C+veg+bottom+dif_r_pct,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
-ttotc.model<-gls(top~p_mm+ta_C+veg+bottom+dif_r_pct,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
-anova(tbio.model)
-anova(tsoil.model)
-anova(ttotc.model)
-
-tbio1.model<-gls(top~p_mm+ta_C+veg+dif_r_pct,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-tsoil1.model<-gls(top~p_mm+ta_C+veg+dif_r_pct,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
-ttotc1.model<-gls(top~p_mm+ta_C+veg+dif_r_pct,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
-anova(tbio1.model)
-anova(tsoil1.model)
-anova(ttotc1.model)
-
-tbio2.model<-gls(top~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='BIO',])
-tsoil2.model<-gls(top~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
-ttotc2.model<-gls(top~p_mm+ta_C+veg+bottom,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
+tbio2.model<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='BIO',])
+tsoil2.model<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='SOILC',],na.action="na.omit")
+ttotc2.model<-gls(top~p_mm+ta_C+veg+root,data=mmp_l[mmp_l$VARIABLE=='TOTC',])
 anova(tbio2.model)
 anova(tsoil2.model)
 anova(ttotc2.model)
